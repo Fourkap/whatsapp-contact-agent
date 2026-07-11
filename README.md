@@ -74,13 +74,26 @@ Toutes les 30 minutes (`SYNC_INTERVAL_SECONDS`) :
 
 Au premier lancement, seules les conversations actives dans les **30 derniers jours** sont importées (100 messages max par conversation).
 
+## Ne suivre que certains numéros
+
+Copie `numeros.example.txt` vers `numeros.txt` et mets un numéro par ligne (avec ou sans indicatif) :
+
+```
++33 6 12 34 56 78
+0687654321
+```
+
+Seuls ces contacts seront synchronisés et résumés. Fichier absent ou vide = tous les contacts. La modification est prise en compte à la synchro suivante, sans redémarrage.
+
 ## Personnalisation
 
 | Quoi | Où |
 |---|---|
 | Fréquence de synchro | `SYNC_INTERVAL_SECONDS` dans `.env` |
+| Fenêtre du premier import | `INITIAL_WINDOW_DAYS` dans `.env` (0 = tout l'historique) |
+| Volume par conversation | `HISTORY_LIMIT` dans `.env` |
+| Liste de numéros à suivre | `numeros.txt` |
 | Format / contenu des fiches | `agent/prompt.md` |
-| Fenêtre du premier import | `INITIAL_WINDOW_DAYS` dans `agent/sync.py` |
 | Inclure les groupes | filtre `isGroup` dans `agent/sync.py` |
 | Modèle Claude | option `--model` dans `agent/run.sh` |
 

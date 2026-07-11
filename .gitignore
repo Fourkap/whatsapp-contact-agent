@@ -1,7 +1,8 @@
 # Secrets — ne JAMAIS committer
 .env
 
-# Données personnelles (messages, fiches, état de synchro, logs)
+# Données personnelles (liste de numéros, messages, fiches, état, logs)
+numeros.txt
 fiches/*
 _state/*
 !fiches/.gitkeep

@@ -15,6 +15,10 @@ services:
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-}
       # Clé API OpenWA (sinon lue depuis le volume openwa-data)
       - OPENWA_API_KEY=${OPENWA_API_KEY:-}
+      # Fenêtre du premier import en jours (0 = tout l'historique disponible)
+      - INITIAL_WINDOW_DAYS=${INITIAL_WINDOW_DAYS:-30}
+      # Messages max récupérés par conversation et par synchro
+      - HISTORY_LIMIT=${HISTORY_LIMIT:-100}
     ports:
       # Dashboard des fiches
       - '127.0.0.1:2786:2786'

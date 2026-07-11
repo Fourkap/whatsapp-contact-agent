@@ -1,0 +1,8 @@
+# Liste blanche de numéros à suivre — copie ce fichier vers numeros.txt
+# Un numéro par ligne, avec ou sans indicatif, espaces/tirets acceptés.
+# Fichier numeros.txt absent ou vide = TOUS les contacts sont suivis.
+#
+# Exemples :
+# +33 6 12 34 56 78
+# 0612345678
+# 33612345678

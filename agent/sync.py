@@ -13,8 +13,12 @@ KEY_FILE = os.environ.get("OPENWA_KEY_FILE", "/openwa-data/.api-key")
 DATA = os.environ.get("DATA_DIR", "/data")
 STATE_FILE = os.path.join(DATA, "_state", "state.json")
 PENDING_DIR = os.path.join(DATA, "_state", "pending")
-INITIAL_WINDOW_DAYS = 30   # au premier passage, on ne remonte que 30 jours
-HISTORY_LIMIT = 100        # messages max récupérés par conversation
+PHONES_CACHE = os.path.join(DATA, "_state", "phones.json")
+WHITELIST_FILE = os.path.join(DATA, "numeros.txt")
+# au premier passage, on ne remonte que N jours (0 = pas de limite)
+INITIAL_WINDOW_DAYS = int(os.environ.get("INITIAL_WINDOW_DAYS", "30"))
+# messages max récupérés par conversation
+HISTORY_LIMIT = int(os.environ.get("HISTORY_LIMIT", "100"))
 
 
 def api(path):
@@ -30,6 +34,42 @@ def slug(name):
     return s or "inconnu"
 
 
+def norm(num):
+    """Normalise un numéro pour comparaison : chiffres seuls, 9 derniers
+    (33 6 59 48 06 63 et 06 59 48 06 63 donnent la même clé)."""
+    d = re.sub(r"\D", "", num or "")
+    return d[-9:] if len(d) >= 9 else d
+
+
+def load_whitelist():
+    """Liste de numéros à suivre (numeros.txt, un par ligne, # = commentaire).
+    Fichier absent ou vide = tous les contacts."""
+    if not os.path.exists(WHITELIST_FILE):
+        return None
+    nums = set()
+    for line in open(WHITELIST_FILE, encoding="utf-8"):
+        line = line.split("#")[0].strip()
+        if line:
+            nums.add(norm(line))
+    return nums or None
+
+
+def resolve_phone(sid, cid, cache):
+    """Résout un identifiant de conversation (@c.us ou @lid) en numéro réel."""
+    if cid in cache:
+        return cache[cid]
+    phone = None
+    if cid.endswith("@c.us"):
+        phone = cid.split("@")[0]
+    else:
+        try:
+            phone = api(f"/sessions/{sid}/contacts/{cid}/phone").get("phone")
+        except Exception:
+            phone = None
+    cache[cid] = phone
+    return phone
+
+
 def main():
     sessions = api("/sessions")
     ready = [s for s in sessions if s.get("status") == "ready"]
@@ -41,9 +81,16 @@ def main():
     state = {}
     if os.path.exists(STATE_FILE):
         state = json.load(open(STATE_FILE))
+    phones = {}
+    if os.path.exists(PHONES_CACHE):
+        phones = json.load(open(PHONES_CACHE))
+
+    whitelist = load_whitelist()
+    if whitelist:
+        print(f"liste blanche active : {len(whitelist)} numéro(s)")
 
     chats = api(f"/sessions/{sid}/chats?limit=1000")
-    cutoff = time.time() - INITIAL_WINDOW_DAYS * 86400
+    cutoff = time.time() - INITIAL_WINDOW_DAYS * 86400 if INITIAL_WINDOW_DAYS > 0 else 0
     dirty = 0
 
     for chat in chats:
@@ -52,6 +99,9 @@ def main():
         if chat.get("isGroup"):
             continue
         if not (cid.endswith("@c.us") or cid.endswith("@lid")):
+            continue
+        phone = resolve_phone(sid, cid, phones)
+        if whitelist is not None and norm(phone) not in whitelist:
             continue
         last_ts = state.get(cid, 0)
         chat_ts = chat.get("timestamp") or 0
@@ -83,7 +133,7 @@ def main():
                 body = m.get("body") or f"[{m.get('type', 'media')}]"
                 f.write(json.dumps({
                     "contact": name,
-                    "phone": m.get("senderPhone") or cid.split("@")[0],
+                    "phone": phone or m.get("senderPhone") or cid.split("@")[0],
                     "de_moi": bool(m.get("fromMe")),
                     "date": time.strftime("%Y-%m-%d %H:%M", time.localtime(m.get("timestamp") or 0)),
                     "type": m.get("type"),
@@ -96,6 +146,7 @@ def main():
 
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     json.dump(state, open(STATE_FILE, "w"))
+    json.dump(phones, open(PHONES_CACHE, "w"))
     print(f"{dirty} contact(s) à mettre à jour.")
     return 0
 
