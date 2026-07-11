@@ -7,3 +7,7 @@ fiches/*
 _state/*
 !fiches/.gitkeep
 !_state/.gitkeep
+
+# Data coaching structurée (personnelle)
+data/*
+!data/.gitkeep

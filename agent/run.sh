@@ -7,7 +7,7 @@ INTERVAL="${SYNC_INTERVAL_SECONDS:-1800}"
 DATA="${DATA_DIR:-/data}"
 LOG="$DATA/_state/logs/agent.log"
 
-mkdir -p "$DATA/_state/pending" "$DATA/_state/archive" "$DATA/_state/logs" \
+mkdir -p "$DATA/_state/pending" "$DATA/_state/archive" "$DATA/_state/logs" "$DATA/data" \
          "$DATA/_state/requests" "$DATA/_state/analyses" "$DATA/fiches"
 
 echo "[agent] démarrage — intervalle ${INTERVAL}s" | tee -a "$LOG"

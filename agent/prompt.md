@@ -36,6 +36,32 @@ Pour CHAQUE fichier `_state/pending/<Nom>.jsonl` :
 
 3. Mets à jour la fiche en INTÉGRANT les nouveaux messages : enrichis les sections stables (Profil, Objectifs) quand on apprend du nouveau, complète « Suivi & progression » et « État d'esprit » avec les éléments datés, réécris « Derniers échanges », et actualise « Actions coach », « Statut », « Dernier contact » et la date de mise à jour.
 
+4. Mets aussi à jour le fichier de données structurées `data/<Nom>.json` (crée-le s'il n'existe pas). Format STRICT (JSON valide, dates en YYYY-MM-DD) :
+
+```json
+{
+  "statut": "client actif",
+  "dernierContact": "2026-07-11",
+  "mesures": [
+    {"date": "2026-07-08", "type": "poids", "valeur": 82.4, "unite": "kg"}
+  ],
+  "sport": [
+    {"date": "2026-07-08", "note": "Séance push faite — développé couché 80 kg × 8 (+5 kg)"}
+  ],
+  "nutrition": [
+    {"date": "2026-07-07", "note": "Diète respectée sauf samedi soir ; ~2600 kcal/j"}
+  ],
+  "sante": [
+    {"date": "2026-07-05", "note": "Douleur épaule droite sur les dips — à surveiller"}
+  ],
+  "focus": [
+    {"date": "2026-07-06", "note": "Motivation en baisse, grosse semaine de travail"}
+  ]
+}
+```
+
+Règles pour le JSON : AJOUTE les nouvelles entrées datées aux tableaux existants (ne supprime jamais les anciennes), classe chaque info dans le bon domaine (sport = séances/perfs/programme ; nutrition = bouffe/diète/kcal ; sante = blessures/sommeil/douleurs ; focus = motivation/mental/discipline), reporte les mesures chiffrées (poids, mensurations) dans `mesures` avec leur unité. N'invente rien : uniquement ce qui vient des messages. Si un domaine n'a rien de nouveau, laisse-le tel quel.
+
 Règles :
 - Écris en français, factuel et concis — c'est un outil de travail de coach, pas un roman.
 - Ne recopie PAS les messages bruts — synthétise.
@@ -43,4 +69,4 @@ Règles :
 - Les chiffres (poids, charges, répétitions, mensurations) sont précieux : reporte-les exactement, avec leur date.
 - Si le contact n'est manifestement PAS un client (ami, famille, spam), remplis quand même la fiche avec la structure générale mais mets **Statut : hors coaching**.
 - Ignore les messages de type `call`, `revoked` ou vides, sauf s'ils sont significatifs (ex. appels manqués répétés = client injoignable).
-- Ne touche à rien d'autre que les fichiers dans `fiches/`.
+- Ne touche à rien d'autre que les fichiers dans `fiches/` et `data/`.
