@@ -19,6 +19,8 @@ services:
       - INITIAL_WINDOW_DAYS=${INITIAL_WINDOW_DAYS:-30}
       # Messages max récupérés par conversation et par synchro
       - HISTORY_LIMIT=${HISTORY_LIMIT:-100}
+      # Optionnel : protège l'API du dashboard (header X-API-Key requis si défini)
+      - AGENT_API_KEY=${AGENT_API_KEY:-}
     ports:
       # Dashboard des fiches
       - '127.0.0.1:2786:2786'

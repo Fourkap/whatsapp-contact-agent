@@ -85,6 +85,28 @@ Copie `numeros.example.txt` vers `numeros.txt` et mets un numéro par ligne (ave
 
 Seuls ces contacts seront synchronisés et résumés. Fichier absent ou vide = tous les contacts. La modification est prise en compte à la synchro suivante, sans redémarrage.
 
+## API REST
+
+Le port 2786 sert aussi une API JSON — pour brancher ton propre dashboard, un n8n, un script… :
+
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET | `/api/fiches` | Liste des fiches + stats de synchro |
+| GET | `/api/fiche/<Nom>.md` | Contenu Markdown d'une fiche |
+| GET | `/api/contacts` | Contacts connus (identifiant, numéro) |
+| GET | `/api/messages/<slug>?limit=200` | Messages bruts archivés d'un contact |
+| POST | `/api/analyses` `{"question": "..."}` | Demande une analyse libre à Claude (traitée en ~20 s) |
+| GET | `/api/analyses` | Liste des analyses (en attente + terminées) |
+| GET | `/api/analyses/<id>` | Résultat d'une analyse |
+
+```bash
+curl -X POST http://localhost:2786/api/analyses \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Quels clients dois-je relancer cette semaine ?"}'
+```
+
+Par défaut l'API n'est accessible que depuis la machine (port lié à 127.0.0.1). Pour la partager, définis `AGENT_API_KEY` dans `.env` (le header `X-API-Key` devient obligatoire) et mets un reverse proxy TLS devant.
+
 ## Personnalisation
 
 | Quoi | Où |
