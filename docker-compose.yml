@@ -1,0 +1,35 @@
+# Agent de fiches contacts WhatsApp — tourne à côté d'OpenWA
+services:
+  contact-agent:
+    build: .
+    container_name: whatsapp-contact-agent
+    restart: unless-stopped
+    networks:
+      - openwa-network
+    environment:
+      - TZ=Europe/Paris
+      - OPENWA_BASE=http://openwa-api:2785/api
+      - SYNC_INTERVAL_SECONDS=${SYNC_INTERVAL_SECONDS:-1800}
+      # Jeton lié à ton abonnement Claude Pro (généré par `claude setup-token`).
+      # Vide = la synchro et le dashboard tournent, les résumés Claude attendent.
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-}
+      # Clé API OpenWA (sinon lue depuis le volume openwa-data)
+      - OPENWA_API_KEY=${OPENWA_API_KEY:-}
+    ports:
+      # Dashboard des fiches
+      - '127.0.0.1:2786:2786'
+    volumes:
+      # fiches + état, visibles sur le Bureau
+      - .:/data
+      # clé API OpenWA lue directement depuis le volume d'OpenWA (lecture seule)
+      - openwa-data:/openwa-data:ro
+
+volumes:
+  openwa-data:
+    name: openwa_openwa-data
+    external: true
+
+networks:
+  openwa-network:
+    name: openwa-network
+    external: true
