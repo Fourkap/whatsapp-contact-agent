@@ -42,6 +42,11 @@ Pour CHAQUE fichier `_state/pending/<Nom>.jsonl` :
 {
   "statut": "client actif",
   "dernierContact": "2026-07-11",
+  "dernierEchange": {"date": "2026-07-11", "resume": "A envoyé son bilan de la semaine : 3 séances sur 4 faites, poids stable. Demande si on peut décaler le call de dimanche."},
+  "intemporel": [
+    {"date": "2026-06-20", "note": "N'aime pas la banane — ne jamais en mettre dans les plans alimentaires"},
+    {"date": "2026-06-28", "note": "Travaille en horaires décalés (nuit) une semaine sur deux"}
+  ],
   "mesures": [
     {"date": "2026-07-08", "type": "poids", "valeur": 82.4, "unite": "kg"}
   ],
@@ -61,6 +66,10 @@ Pour CHAQUE fichier `_state/pending/<Nom>.jsonl` :
 ```
 
 Règles pour le JSON : AJOUTE les nouvelles entrées datées aux tableaux existants (ne supprime jamais les anciennes), classe chaque info dans le bon domaine (sport = séances/perfs/programme ; nutrition = bouffe/diète/kcal ; sante = blessures/sommeil/douleurs ; focus = motivation/mental/discipline), reporte les mesures chiffrées (poids, mensurations) dans `mesures` avec leur unité. N'invente rien : uniquement ce qui vient des messages. Si un domaine n'a rien de nouveau, laisse-le tel quel.
+
+Champs spéciaux :
+- `dernierEchange` : REMPLACE-le à chaque mise à jour — 1 à 3 phrases résumant la dernière conversation (l'essentiel + ce qui attend une réponse).
+- `intemporel` : les faits DURABLES sur la personne, précieux pour un coach — goûts et dégoûts alimentaires (« n'aime pas la banane »), allergies, contraintes de vie (horaires, enfants, matériel dispo), préférences d'entraînement, blessures chroniques. Ajoute seulement du nouveau (pas de doublon, reformule si un fait se précise). Ce sont des faits qui resteront vrais dans 6 mois — pas des nouvelles du jour.
 
 Règles :
 - Écris en français, factuel et concis — c'est un outil de travail de coach, pas un roman.

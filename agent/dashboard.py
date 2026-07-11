@@ -176,7 +176,7 @@ PAGE = r"""<!doctype html>
   body { font: 14px/1.55 var(--sans); background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
   ::selection { background: var(--accent); color: #fff; }
 
-  header { padding: 0 26px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 30px; height: 62px; }
+  header { padding: 0 26px; background: var(--panel); border-top: 3px solid var(--accent); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 30px; height: 64px; }
   .logo { font-family: var(--serif); font-style: italic; font-weight: 800; font-size: 24px; letter-spacing: 0.01em; white-space: nowrap; }
   .logo b { color: var(--accent); }
   .tabs { display: flex; gap: 2px; height: 100%; }
@@ -198,11 +198,19 @@ PAGE = r"""<!doctype html>
   .btn:hover { background: var(--accent-dim); }
   .btn:disabled { opacity: 0.4; cursor: default; }
   #list { overflow-y: auto; flex: 1; margin-top: 10px; }
-  .item { padding: 12px 18px; cursor: pointer; border-bottom: 1px solid var(--border); }
+  .item { padding: 11px 16px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; }
   .item:hover { background: var(--hover); }
   .item.active { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+  .av { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #2b2b2b, #191919); border: 1px solid var(--border);
+        font-weight: 800; font-size: 12px; color: var(--muted); }
+  .item.active .av, .item:hover .av { color: var(--accent); border-color: var(--accent-dim); }
+  .item .meta { min-width: 0; flex: 1; }
   .item .n { font-weight: 600; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .item .d { color: var(--muted); font-size: 11.5px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item .d { color: var(--muted); font-size: 11.5px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+  .sdot.actif { background: var(--ok); } .sdot.relance { background: var(--warn); }
+  .sdot.prospect { background: #4aa8ff; } .sdot.autre { background: #3a3a3a; }
   .pill { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 3px;
           background: var(--accent-soft); color: var(--accent); text-transform: uppercase; }
   .pill.wait { background: var(--panel2); color: var(--muted); }
@@ -219,14 +227,41 @@ PAGE = r"""<!doctype html>
   .doc em { color: var(--muted); }
   .empty { color: var(--muted); text-align: center; margin-top: 90px; font-size: 13px; }
 
+  /* dashboard client */
+  .chead { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; max-width: 900px; }
+  .chead h1 { font-family: var(--serif); font-size: 32px; font-weight: 800; }
+  .badge { font-size: 10.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; }
+  .badge.actif { background: rgba(61,220,132,0.14); color: var(--ok); }
+  .badge.relance { background: rgba(255,176,32,0.14); color: var(--warn); }
+  .badge.prospect { background: rgba(74,168,255,0.14); color: #4aa8ff; }
+  .badge.autre { background: var(--panel2); color: var(--muted); }
+  .chead .lc { color: var(--muted); font-size: 12.5px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 16px; max-width: 900px; }
+  .tile { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px 14px;
+          display: flex; flex-direction: column; min-height: 116px; transition: border-color 0.15s; }
+  .tile:hover { border-color: #3a3a3a; }
+  .tile .tl { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .tile .tv { font-family: var(--serif); font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+  .tile .tv small { font-size: 14px; font-weight: 400; color: var(--muted); }
+  .tile .delta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .tile .delta b { color: var(--accent); font-weight: 700; }
+  .tile svg { display: block; margin-top: auto; padding-top: 8px; width: 100%; }
+  .two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; max-width: 900px; align-items: start; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+  details.fdoc { max-width: 900px; margin-top: 26px; border-top: 1px solid var(--border); padding-top: 14px; }
+  details.fdoc summary { cursor: pointer; font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  details.fdoc summary:hover { color: var(--text); }
+
   /* data coaching */
-  .datagrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 8px; max-width: 780px; }
+  .datagrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0 8px; max-width: 900px; }
   @media (max-width: 900px) { .datagrid { grid-template-columns: 1fr; } }
-  .dcard { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 16px 18px; }
-  .dcard h4 { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-  .dcard .entry { font-size: 12.5px; padding: 6px 0; border-top: 1px solid var(--border); }
+  .dcard { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; transition: border-color 0.15s; }
+  .dcard:hover { border-color: #3a3a3a; }
+  .dcard h4 { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+              padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .dcard .entry { font-size: 13px; line-height: 1.5; padding: 7px 0; border-top: 1px solid var(--border); }
   .dcard .entry:first-of-type { border-top: none; }
-  .dcard .entry time { color: var(--muted); font-size: 11px; display: block; }
+  .dcard .entry time { color: var(--muted); font-size: 11px; display: block; margin-bottom: 1px; }
   .mesures { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
   .mes { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 12px 18px; }
   .mes .v { font-family: var(--serif); font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -305,6 +340,31 @@ function md(src) {
 
 async function jget(u) { const r = await fetch(u); if (!r.ok) throw new Error((await r.json()).error || r.status); return r.json(); }
 
+function initials(name) {
+  const parts = (name || '?').trim().split(/\s+/).filter(w => /[a-zA-ZÀ-ü]/.test(w[0]));
+  return ((parts[0] || '?')[0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+}
+
+function statutCls(st) {
+  st = (st || '').toLowerCase();
+  if (!st) return '';
+  return st.includes('actif') ? 'actif' : st.includes('relanc') ? 'relance' : st.includes('prospect') ? 'prospect' : 'autre';
+}
+
+function spark(mesures) {
+  const vals = mesures.map(m => m.valeur);
+  if (vals.length < 2) return '';
+  const w = 170, h = 42, p = 4;
+  const min = Math.min(...vals), max = Math.max(...vals), r = (max - min) || 1;
+  const pts = vals.map((v, i) => [p + i * (w - 2*p) / (vals.length - 1), h - p - (v - min) * (h - 2*p) / r]);
+  const last = pts[pts.length - 1];
+  return '<svg width="' + w + '" height="' + h + '" role="img" aria-label="évolution du poids">' +
+    '<title>' + mesures.map(m => (m.date || '') + ' : ' + m.valeur).join('  ·  ') + '</title>' +
+    '<polyline points="' + pts.map(pt => pt[0].toFixed(1) + ',' + pt[1].toFixed(1)).join(' ') +
+    '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="3" fill="var(--accent)"/></svg>';
+}
+
 async function load() {
   try {
     const [df, da] = await Promise.all([jget('/api/fiches'), jget('/api/analyses')]);
@@ -326,16 +386,19 @@ function render() {
   el.innerHTML = '';
   let items = [];
   if (tab === 'clients') items = fiches.filter(f => f.name.toLowerCase().includes(q)).map(f => ({
-    key: f.file, title: f.name, sub: 'maj ' + f.updated, done: true }));
+    key: f.file, title: f.name, sub: (f.statut ? esc(f.statut) + ' · ' : '') + 'maj ' + f.updated,
+    dot: statutCls(f.statut), av: initials(f.name), done: true }));
   else if (tab === 'chat') items = chats.filter(c => (c.name||'').toLowerCase().includes(q)).map(c => ({
-    key: c.id, title: c.name, sub: c.lastMessage || '', done: true }));
+    key: c.id, title: c.name, sub: esc(c.lastMessage || ''), av: initials(c.name), done: true }));
   else if (tab === 'analyses') items = analyses.map(a => ({
-    key: a.id, title: a.question, sub: a.date, done: a.status === 'done' }));
+    key: a.id, title: a.question, sub: esc(a.date), done: a.status === 'done' }));
   items.forEach(it => {
     const d = document.createElement('div');
     d.className = 'item' + (current === it.key ? ' active' : '');
-    d.innerHTML = '<div class="n">' + esc(it.title) + '</div><div class="d">' + esc(it.sub) +
-      (it.done ? '' : ' <span class="pill wait">en cours</span>') + '</div>';
+    d.innerHTML = (it.av ? '<div class="av">' + esc(it.av) + '</div>' : '') +
+      '<div class="meta"><div class="n">' + esc(it.title) + '</div><div class="d">' +
+      (it.dot ? '<span class="sdot ' + it.dot + '"></span>' : '') + it.sub +
+      (it.done ? '' : ' <span class="pill wait">en cours</span>') + '</div></div>';
     d.onclick = () => open(it.key);
     el.appendChild(d);
   });
@@ -355,22 +418,52 @@ async function open(key) {
       fetch('/api/fiche/' + encodeURIComponent(key)).then(r => r.text()),
       fetch('/api/data/' + encodeURIComponent(slug)).then(r => r.ok ? r.json() : null).catch(() => null),
     ]);
-    let html = '<div class="doc">' + md(txt) + '</div>';
-    if (data) {
-      const mes = (data.mesures || []).slice(-4);
-      if (mes.length) html += '<div class="mesures">' + mes.map(m =>
-        '<div class="mes"><div class="v">' + esc(String(m.valeur)) + '<small style="font-size:13px"> ' + esc(m.unite||'') + '</small></div><div class="l">' + esc(m.type||'mesure') + ' · ' + esc(m.date||'') + '</div></div>').join('') + '</div>';
-      const domains = [['sport','🏋️ Sport'],['nutrition','🍗 Nutrition'],['sante','❤️ Santé'],['focus','🧠 Focus']];
-      html += '<div class="datagrid">' + domains.map(([k, label]) => {
-        const entries = (data[k] || []).slice(-4).reverse();
-        return '<div class="dcard"><h4>' + label + '</h4>' + (entries.length
-          ? entries.map(e => '<div class="entry"><time>' + esc(e.date||'') + '</time>' + esc(e.note||'') + '</div>').join('')
-          : '<div class="entry" style="color:var(--muted)">Rien d’extrait pour l’instant</div>') + '</div>';
-      }).join('') + '</div>';
+    if (!data) { view.innerHTML = '<div class="doc">' + md(txt) + '</div>'; return; }
+
+    const cls = statutCls(data.statut) || 'autre';
+    let html = '<div class="chead"><h1>' + esc(slug.replace(/-/g, ' ')) + '</h1>' +
+      (data.statut ? '<span class="badge ' + cls + '">' + esc(data.statut) + '</span>' : '') +
+      (data.dernierContact ? '<span class="lc">dernier contact : ' + esc(data.dernierContact) + '</span>' : '') + '</div>';
+
+    let tiles = '';
+    const poids = (data.mesures || []).filter(m => (m.type || '') === 'poids' && typeof m.valeur === 'number');
+    if (poids.length) {
+      const last = poids[poids.length - 1], delta = last.valeur - poids[0].valeur;
+      tiles += '<div class="tile"><div class="tl">Poids · ' + esc(last.date || '') + '</div>' +
+        '<div class="tv">' + last.valeur + '<small> ' + esc(last.unite || 'kg') + '</small></div>' +
+        (poids.length > 1 ? '<div class="delta"><b>' + (delta > 0 ? '+' : '') + delta.toFixed(1) + ' ' + esc(last.unite || 'kg') + '</b> depuis le début</div>' + spark(poids) : '') + '</div>';
     }
+    const j = data.dernierContact ? Math.max(0, Math.round((Date.now()/1000 - new Date(data.dernierContact).getTime()/1000) / 86400)) : null;
+    if (j !== null) tiles += '<div class="tile"><div class="tl">Sans nouvelles</div><div class="tv">' + j + '<small> jour' + (j > 1 ? 's' : '') + '</small></div>' +
+      '<div class="delta">' + (j >= 7 ? '<b>à relancer</b>' : 'contact récent') + '</div></div>';
+    tiles += '<div class="tile"><div class="tl">Notes sport</div><div class="tv">' + (data.sport || []).length + '</div></div>';
+    tiles += '<div class="tile"><div class="tl">À retenir</div><div class="tv">' + (data.intemporel || []).length + '<small> fait' + ((data.intemporel || []).length > 1 ? 's' : '') + '</small></div></div>';
+    html += '<div class="tiles">' + tiles + '</div>';
+
+    html += '<div class="two">' +
+      '<div class="dcard"><h4>💬 Dernière conversation' + (data.dernierEchange && data.dernierEchange.date ? ' · ' + esc(data.dernierEchange.date) : '') + '</h4>' +
+      '<div class="entry">' + esc((data.dernierEchange && data.dernierEchange.resume) || 'Pas encore de résumé') + '</div></div>' +
+      '<div class="dcard"><h4>📌 À retenir</h4>' + ((data.intemporel || []).length
+        ? data.intemporel.map(f => '<div class="entry">' + esc(f.note || '') + '</div>').join('')
+        : '<div class="entry" style="color:var(--muted)">Rien de détecté pour l’instant</div>') + '</div></div>';
+
+    const domains = [['sport','🏋️ Sport'],['nutrition','🍗 Nutrition'],['sante','❤️ Santé'],['focus','🧠 Focus']];
+    html += '<div class="datagrid">' + domains.map(([k, label]) => {
+      const entries = (data[k] || []).slice(-4).reverse();
+      return '<div class="dcard"><h4>' + label + '</h4>' + (entries.length
+        ? entries.map(e => '<div class="entry"><time>' + esc(e.date||'') + '</time>' + esc(e.note||'') + '</div>').join('')
+        : '<div class="entry" style="color:var(--muted)">Rien d’extrait pour l’instant</div>') + '</div>';
+    }).join('') + '</div>';
+
+    html += '<details class="fdoc"><summary>Fiche complète ▾</summary><div class="doc">' + md(txt) + '</div></details>';
     view.innerHTML = html;
   } else if (tab === 'chat') {
-    view.innerHTML = '<div id="chatview"><div id="chatlog"><div class="empty">Chargement…</div></div>' +
+    const c = chats.find(x => x.id === key);
+    view.innerHTML = '<div id="chatview">' +
+      '<div style="display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:12px">' +
+      '<div class="av">' + esc(initials(c ? c.name : '?')) + '</div>' +
+      '<div style="font-weight:700;font-size:15px">' + esc(c ? c.name : key) + '</div></div>' +
+      '<div id="chatlog"><div class="empty">Chargement…</div></div>' +
       '<div id="composer"><textarea id="draft" rows="2" placeholder="Écrire au client…"></textarea><button id="send">Envoyer</button></div></div>';
     document.getElementById('send').onclick = sendMsg;
     document.getElementById('draft').addEventListener('keydown', e => {
@@ -529,9 +622,10 @@ class Handler(BaseHTTPRequestHandler):
                     if not f.endswith(".md"):
                         continue
                     st = os.stat(os.path.join(FICHES, f))
+                    statut = read_json(os.path.join(DATADIR, f[:-3] + ".json"), {}).get("statut")
                     fiches.append({"file": f, "name": f[:-3].replace("-", " "),
                                    "updated": time.strftime("%d/%m %H:%M", time.localtime(st.st_mtime)),
-                                   "mtime": st.st_mtime})
+                                   "statut": statut, "mtime": st.st_mtime})
             fiches.sort(key=lambda x: -x["mtime"])
             archived = 0
             if os.path.isdir(ARCHIVE):
